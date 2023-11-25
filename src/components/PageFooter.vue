@@ -4,7 +4,9 @@
     class="footer"
   >
 
-    <span class="tooltip tooltip-position" data-name="настройки">
+    <span
+      :class="{ tooltip: isTooltip, 'tooltip-position': isTooltip}"
+      data-name="настройки">
          <PageButton
            aria-label="настройки"
            @click="isSettings=true"
@@ -14,7 +16,9 @@
       </span>
 
     <RouterLink :to="{ name: 'login' }">
-           <span class="tooltip tooltip-position" data-name="вход&nbsp;для&nbsp;HR">
+           <span
+             :class="{ tooltip: isTooltip, 'tooltip-position': isTooltip}"
+             data-name="вход&nbsp;для&nbsp;HR">
               <PageButton aria-label="вход для HR">
         <IconHR />
               </PageButton>
@@ -34,6 +38,9 @@ import IconHR from "@/components/icons/IconHR.vue";
 import PageButton from "@/components/UI/PageButton.vue";
 import PageMenu from "@/components/PageMenu.vue";
 
+import { useKeyStore } from "@/stores/KeyStore";
+import { mapState } from "pinia";
+
 
 export default {
   name: "PageFooter.vue",
@@ -41,13 +48,30 @@ export default {
 
   data() {
     return {
-      isSettings: false
+      isSettings: false,
+      isTooltip: null
     };
   },
 
   props: {
     isMain: Boolean
+  },
+
+  created() {
+    this.isTooltip = this.getStoreKey()["isTooltip"];
+    // console.log(this.isTooltip);
+  },
+
+  watch: {
+    isTooltip() {
+      this.isTooltip = this.getStoreKey()["isTooltip"];
+    }
+  },
+
+  computed: {
+    ...mapState(useKeyStore, ["getStoreKey"])
   }
+
 };
 </script>
 

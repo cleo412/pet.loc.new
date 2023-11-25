@@ -71,8 +71,8 @@ export default {
 
   computed: {
     ...mapState(useEmplStore, [
-      "getEmptyStore",
-      "getKeyInStore"
+      "getEmptyStoreEmpl",
+      "getKeyInStoreEmpl"
     ])
   },
 
@@ -104,7 +104,7 @@ export default {
     // для форматирование данных с сервера и их сортировка  (нужно в Page)
     async basicDataToStore() {
       try {
-        if (this.getEmptyStore("employees")) {
+        if (this.getEmptyStoreEmpl("employees")) {
           await this.dataGetBackend("employees", "getBasicUrl");
         }
         this.employees = this.formatStoreData("employees");
@@ -118,7 +118,7 @@ export default {
     // для  кол-ва именинников на сегодняшнюю дату (PageBar стр. 12)
     getTodayBirthday() {
       let todayDate = this.giveTodayDate();
-      return this.amountBirthdays = ([...this.getKeyInStore("employees").values()].filter(
+      return this.amountBirthdays = ([...this.getKeyInStoreEmpl("employees").values()].filter(
         (elem) => elem["birthday"] === todayDate).length);
     },
 

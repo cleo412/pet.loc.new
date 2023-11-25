@@ -1,4 +1,7 @@
 <template>
+
+  {{ isTooltip }}
+
   <div class="wrapper">
     <form
       class="card-form"
@@ -208,7 +211,7 @@
       <div class=" card-form__buttons">
         <template v-if="!isMain">
         <span
-          class="tooltip tooltip-position"
+          :class="{ tooltip: isTooltip, 'tooltip-position': isTooltip}"
           data-name="редактировать"
         >
           <PageColorButton
@@ -220,7 +223,9 @@
           </PageColorButton>
         </span>
 
-          <span class="tooltip tooltip-position" data-name="сохранить">
+          <span
+            :class="{ tooltip: isTooltip, 'tooltip-position': isTooltip}"
+            data-name="сохранить">
           <PageColorButton
             tabindex="15"
             aria-label="кнопка сохранения данных сотрудника"
@@ -231,7 +236,9 @@
         </span>
         </template>
 
-        <span class="tooltip tooltip-position" data-name="выйти">
+        <span
+          :class="{ tooltip: isTooltip, 'tooltip-position': isTooltip}"
+          data-name="выйти">
         <PageColorButton
           tabindex="isMain ? '16': '1'"
           aria-label="кнопка выхода"
@@ -256,7 +263,8 @@
 
 <script>
 import { useEmplStore } from "@/stores/EmplStore";
-import { mapActions } from "pinia";
+import { useKeyStore } from "@/stores/KeyStore";
+import { mapState, mapActions } from "pinia";
 import { vMaska } from "maska";
 
 import PagePopup from "@/components/PagePopup.vue";
@@ -302,8 +310,14 @@ export default {
       },
 
       upload: null,
-      employeePhoto: ""
+      employeePhoto: "",
+      isTooltip: null
     };
+  },
+
+  created() {
+    this.isTooltip = this.getStoreKey()["isTooltip"];
+    console.log(this.isTooltip);
   },
 
   mounted() {
@@ -311,6 +325,8 @@ export default {
   },
 
   computed: {
+    ...mapState(useKeyStore, ["getStoreKey"]),
+
     sendForm() {
       return (this.employee.last_name && this.employee.first_name);
     }

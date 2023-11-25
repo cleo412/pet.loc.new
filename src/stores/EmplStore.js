@@ -12,17 +12,20 @@ export const useEmplStore = defineStore("EmplStore", {
       putBasicUrl: "put.php",
       getArchiveUrl: "get_arch.php",
       putArchiveUrl: "put_arch.php",
+      flags: { isAlphabet: false, isTooltip: true, isColorTheme: false },
       isAlphabet: false,
+      isTooltip: true,
+      isColorTheme: false,
     };
   },
 
   getters: {
-    getEmptyStore: (state) => (key) =>
+    getEmptyStoreEmpl: (state) => (key) =>
       !state[key] ? true : state[key].size === 0,
 
-    getStore: (state) => () => state,
+    getStoreEmpl: (state) => () => state,
 
-    getKeyInStore: (state) => (key) => state[key],
+    getKeyInStoreEmpl: (state) => (key) => state[key],
 
     getEmployeeById: (state) => (key, id) => state[key].get(id),
   },
@@ -38,15 +41,11 @@ export const useEmplStore = defineStore("EmplStore", {
       return day + month;
     },
 
-    setToggle(flag) {
-      return (this.getStore()[flag] = !this.getStore()[flag]);
-    },
-
     // взять с сервера
     async dataGetBackend(key, url) {
       try {
         let response = await fetch(
-          this.getKeyInStore("serverUrl") + this.getKeyInStore(url),
+          this.getKeyInStoreEmpl("serverUrl") + this.getKeyInStoreEmpl(url),
           {
             headers: {
               "Content-Type": "application/json",
@@ -66,11 +65,12 @@ export const useEmplStore = defineStore("EmplStore", {
           if (key === "employees") {
             elem.thumbnail =
               elem.thumbnail === false
-                ? (await this.getKeyInStore("imageUrl")) + `defaultPhoto.jpg`
-                : (await this.getKeyInStore("imageUrl")) + `${elem.id}.jpg`;
+                ? (await this.getKeyInStoreEmpl("imageUrl")) +
+                  `defaultPhoto.jpg`
+                : (await this.getKeyInStoreEmpl("imageUrl")) + `${elem.id}.jpg`;
           } else {
             elem.thumbnail =
-              (await this.getKeyInStore("imageUrl")) + `defaultPhoto.jpg`;
+              (await this.getKeyInStoreEmpl("imageUrl")) + `defaultPhoto.jpg`;
           }
         }
         this[key] = new Map();
@@ -83,7 +83,7 @@ export const useEmplStore = defineStore("EmplStore", {
     // отправить на сервер
     async dataPutBackend(key, url) {
       // тяну из  state массив сотрудников
-      let arr = [...(await this.getKeyInStore(key).values())];
+      let arr = [...(await this.getKeyInStoreEmpl(key).values())];
 
       // возвращаю в нужный формат поле "пол" сотрудника
       for (let elem of arr) {
@@ -97,13 +97,13 @@ export const useEmplStore = defineStore("EmplStore", {
         if (key === "employees") {
           elem.thumbnail =
             elem.thumbnail !==
-            this.getKeyInStore("imageUrl") + `defaultPhoto.jpg`;
+            this.getKeyInStoreEmpl("imageUrl") + `defaultPhoto.jpg`;
         }
       }
 
       try {
         let promise = await fetch(
-          this.getKeyInStore("serverUrl") + this.getKeyInStore(url),
+          this.getKeyInStoreEmpl("serverUrl") + this.getKeyInStoreEmpl(url),
           {
             method: "POST",
             headers: {
@@ -120,13 +120,13 @@ export const useEmplStore = defineStore("EmplStore", {
     // для алфавитной сортировки
     formatStoreData(key) {
       return !this.isAlphabet
-        ? this.alphabetSortStart([...this.getKeyInStore(key).values()])
-        : this.alphabetSortEnd([...this.getKeyInStore(key).values()]);
+        ? this.alphabetSortStart([...this.getKeyInStoreEmpl(key).values()])
+        : this.alphabetSortEnd([...this.getKeyInStoreEmpl(key).values()]);
     },
 
     setMessage(key) {
       return (this.message =
-        this.getKeyInStore(key).size === 0
+        this.getKeyInStoreEmpl(key).size === 0
           ? "Список сотрудников пуст"
           : "Нет сотрудников, соответствующих вашему поиску");
     },
@@ -146,11 +146,11 @@ export const useEmplStore = defineStore("EmplStore", {
 
       // меняю его фото на дефолтное и делаю неактивным ( поле hide)
       delEmployee.thumbnail =
-        this.getKeyInStore("imageUrl") + `defaultPhoto.jpg`;
+        this.getKeyInStoreEmpl("imageUrl") + `defaultPhoto.jpg`;
       delEmployee.hide = true;
 
       // добавляю его в архив
-      await this.getKeyInStore("archive").set(id, delEmployee);
+      await this.getKeyInStoreEmpl("archive").set(id, delEmployee);
 
       // отправляю инфу на сервер об удаляемом в архив сотруднике
       await this.dataPutBackend("archive", "putArchiveUrl");
@@ -187,7 +187,7 @@ export const useEmplStore = defineStore("EmplStore", {
         department: "",
         company: "",
         city: "",
-        thumbnail: this.getKeyInStore("imageUrl") + `defaultPhoto.jpg`,
+        thumbnail: this.getKeyInStoreEmpl("imageUrl") + `defaultPhoto.jpg`,
       };
 
       this.employees.set(idEmployee, employee);

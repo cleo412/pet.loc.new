@@ -94,14 +94,14 @@ export default defineComponent({
   },
 
   computed: {
-    ...mapState(useEmplStore, ["getKeyInStore"])
+    ...mapState(useEmplStore, ["getKeyInStoreEmpl"])
   },
 
   methods: {
     setSlidesLink() {
       try {
         this.slides.map((elem, index) =>
-          elem.slide = this.getKeyInStore("imageUrl") + `cafe${index + 1}.jpeg`);
+          elem.slide = this.getKeyInStoreEmpl("imageUrl") + `cafe${index + 1}.jpeg`);
       } catch (error) {
         this.message = `Ошибка  ${error}`;
       }

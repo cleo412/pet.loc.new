@@ -55,7 +55,7 @@ export default {
   },
 
   computed: {
-    ...mapState(useEmplStore, ["getEmptyStore", "dataGetBackend", "dataPutBackend"])
+    ...mapState(useEmplStore, ["getEmptyStoreEmpl", "dataGetBackend", "dataPutBackend"])
   },
 
   methods: {
@@ -63,7 +63,7 @@ export default {
 
     async archiveDataToStore() {
       try {
-        if (this.getEmptyStore("archive")) {
+        if (this.getEmptyStoreEmpl("archive")) {
           await this.dataGetBackend("archive", "getArchiveUrl");
         }
         this.employees = await this.formatStoreData("archive");
